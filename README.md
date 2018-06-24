@@ -40,7 +40,7 @@ The source contains comments that describes the preparation process before it's 
 
 ### Steps 
 * map - parses the row and converts column 3 (2 zero based) to a long type
-* oDF - assigns column headers to the DF schema
+* toDF - assigns column headers to the DF schema
 * drop - drops the column since we don't need it and don't want to hold it in memory
 * filter - filters out records using regex
 
@@ -55,3 +55,68 @@ Since we consume most of the columns and there are not a lot of columns, the sug
 ## Windowing
 This implementation uses windowing in spark to partition the data by language and order them by the number of non_unique_views views descending. The window uses row_number() window to add a column containing the row number. This enables me to select only the 10 rows which corresponds to the top ten most popular wiki pages.
 
+## Saving to CSV
+The results are written into a single CSV file. To accomplish this, the data has to be either ***repartition(1)*** or ***coalesce(1)***. Repartitioning will redistribute the data across executors for balanced parallelism. Coalesce does not redistribute data and could cause a single executor to process most of the data.
+
+## Pipeline Stages
+
+### After Data Preparation
+```
+>>> pages.show()
++--------+--------------------+----------------+
+|language|           page_name|non_unique_views|
++--------+--------------------+----------------+
+|    aa.d|           Main_Page|               1|
+|      aa|%D0%92%D0%B0%D1%8...|               1|
+|      aa|Meta.wikimedia.or...|               1|
+|      aa|meta.wikimedia.or...|               1|
+|    ab.d|%D0%90%D0%BC%D0%B...|               1|
+|    ab.d|%D0%90%D0%BC%D0%B...|               1|
+|    ab.d|%D0%90%D1%88%D0%B...|               1|
+|    ab.d|%D0%90%D1%88%D0%B...|               1|
+|    ab.d|%D0%97%D0%B0%D0%B...|               1|
+|    ab.d|%D0%B7%D0%B0%D0%B...|               1|
+|    ab.d|          windshield|               1|
+|   ab.mw|                  ab|               9|
+|    ab.q|     Help%3AContents|               1|
+|    ab.q|          Help%3AFAQ|               1|
+|    ab.q|       Help%3AManual|               1|
+|    ab.q|                  Wq|               1|
+|      ab|%2525D0%252590%25...|               1|
+|      ab|%D0%90%D0%B2%D0%B...|               1|
+|      ab|%D0%90%D0%B2%D0%B...|               1|
+|      ab|%D0%90%D0%B2%D0%B...|               1|
++--------+--------------------+----------------+
+only showing top 20 rows
+
+```
+
+### After Windowing
+```
+>>> result.show()
++--------+--------------------+----------------+---+
+|language|           page_name|non_unique_views|row|
++--------+--------------------+----------------+---+
+| cbk-zam|   El_Primero_Pagina|               4|  1|
+| cbk-zam|                1868|               2|  2|
+| cbk-zam|                1939|               2|  3|
+| cbk-zam|          1_de_Enero|               2|  4|
+| cbk-zam|                2010|               2|  5|
+| cbk-zam|       20_de_Febrero|               2|  6|
+| cbk-zam|         21_de_Enero|               2|  7|
+| cbk-zam|       27_de_octubre|               2|  8|
+| cbk-zam|     29_de_Diciembre|               2|  9|
+| cbk-zam|     30_de_Diciembre|               2| 10|
+|    ro.b|%C5%9Eah/Reguli_d...|               5|  1|
+|    ro.b|Englez%C4%83/Cuvi...|               2|  2|
+|    ro.b|Karaoke_-_versuri...|               2|  3|
+|    ro.b|Manual_de_impleme...|               2|  4|
+|    ro.b|Medicin%C4%83/Ulc...|               2|  5|
+|    ro.b|     %C5%9Eah/Regele|               1|  6|
+|    ro.b|%E0%A4%B5%E0%A4%B...|               1|  7|
+|    ro.b|Artroplastia_tota...|               1|  8|
+|    ro.b|Carte_de_bucate:S...|               1|  9|
+|    ro.b|Englez%C4%83/Gram...|               1| 10|
++--------+--------------------+----------------+---+
+only showing top 20 rows
+```
