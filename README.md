@@ -120,3 +120,33 @@ only showing top 20 rows
 +--------+--------------------+----------------+---+
 only showing top 20 rows
 ```
+
+### Saved data
+```
+>>> result.drop("row").orderBy("language", col("non_unique_views").desc()).show()
++--------+--------------------+----------------+
+|language|           page_name|non_unique_views|
++--------+--------------------+----------------+
+|      aa|meta.wikimedia.or...|               1|
+|      aa|Meta.wikimedia.or...|               1|
+|      aa|%D0%92%D0%B0%D1%8...|               1|
+|    aa.d|           Main_Page|               1|
+|      ab|%D0%98%D1%85%D0%B...|               5|
+|      ab|%D0%98%D0%B0%D0%B...|               3|
+|      ab|%D0%90%D1%82%D3%9...|               2|
+|      ab|%D0%90%D2%A7%D1%8...|               2|
+|      ab|%D0%90%D0%BB%D0%B...|               2|
+|      ab|%D0%90%D0%BA%D0%B...|               2|
+|      ab|%D0%90%D1%84%D0%B...|               2|
+|      ab|%D0%90%D1%88%D0%B...|               2|
+|      ab|%D0%90%D1%88%D0%B...|               2|
+|      ab|%D0%90%D0%BC%D0%B...|               2|
+|    ab.d|%D0%90%D0%BC%D0%B...|               1|
+|    ab.d|%D0%90%D1%88%D0%B...|               1|
+|    ab.d|%D0%97%D0%B0%D0%B...|               1|
+|    ab.d|%D0%B7%D0%B0%D0%B...|               1|
+|    ab.d|%D0%90%D0%BC%D0%B...|               1|
+|    ab.d|          windshield|               1|
++--------+--------------------+----------------+
+only showing top 20 rows
+```
