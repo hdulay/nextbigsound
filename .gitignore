@@ -1,0 +1,6 @@
+spark-warehouse
+metastore_db
+derby.log
+*.gz
+results*
+.DS_Store
