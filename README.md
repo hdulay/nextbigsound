@@ -56,7 +56,7 @@ Since we consume most of the columns and there are not a lot of columns, the sug
 This implementation uses windowing in spark to partition the data by language and order them by the number of non_unique_views views descending. The window uses row_number() window to add a column containing the row number. This enables me to select only the 10 rows which corresponds to the top ten most popular wiki pages.
 
 ## Saving to CSV
-The results are written into a single CSV file. To accomplish this, the data has to be either ***repartition(1)*** or ***coalesce(1)***. Repartitioning will redistribute the data across executors for balanced parallelism. Coalesce does not redistribute data and could cause a single executor to process most of the data.
+The results are written into a single CSV file. To accomplish this, the data has to be either ***repartition(1)*** or ***coalesce(1)*** . Repartitioning will redistribute the data across executors for balanced parallelism. Coalesce does not redistribute data and could cause a single executor to process most of the data.
 
 ## Pipeline Stages
 
