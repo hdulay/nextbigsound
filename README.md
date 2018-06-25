@@ -33,7 +33,7 @@ $ ./run.sh
 See [batch.py](batch.py). This python script contains both the ingestion, cleansing and analysis of the data. In production, it might be best to separate these 3 steps into their own applications that can be scaled individually. 
 
 ## Ingestion
-This implementation uses the input parameters defined in usage and saves the data set locally or on HDFS. **Writing to HDFS is still a ___TODO___**. A database is not used nor is it required since Spark can load the data set file into a data frame. For larger data sets, I recommend uploading into HDFS for distributed processing with YARN and Spark 2. This is also a ***TODO*** is the ability to consume multiple data set files at once.
+This implementation uses the input parameters defined in usage and saves the data set locally or on HDFS. **Writing to HDFS is still a ___TODO___**. A database is not used nor is it required since Spark can load the data set file into a data frame. For larger data sets, I recommend uploading into HDFS for distributed processing with YARN and Spark 2. Also a ***TODO*** is the ability to download multiple data set files and process them together.
 
 ## Data Preparation
 The source code contains comments that describes the preparation process before it's sent to analysis. In a production system and depending on the rate of ingestion, it would make sense to separate ingestion, preparation and analytics into separate processes. Most likely preparation of data will take longer and we don't want that affecting ingestion rate.
